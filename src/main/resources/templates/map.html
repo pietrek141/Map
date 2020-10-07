@@ -1,0 +1,71 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Map App</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+          integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+          crossorigin=""/>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+
+
+
+    <style>#mapid { height: 600px; }</style>
+
+</head>
+<body>
+<h1>Hello, <span th:text="${user}"/>!</h1>
+<h2>Add your point</h2>
+<form th:action="@{/add-point}" th:object="${newPoint}" method="post">
+    <p>Lat: <input type="text" th:field="*{lat}"></p>
+    <p>Lon: <input type="text" th:field="*{lon}"></p>
+    <p>Name: <input type="text" th:field="*{name}"></p>
+    <p><input type="submit" value="Add new point!"></p>
+</form>
+
+<h2>Remove your point</h2>
+<form th:action="@{/delete-point}" th:object="${pointId}" method="post">
+    <p>Id: <input type="text" th:field=="*{id}"></p>
+    <p><input type="submit" value="Delete point!"></p>
+</form>
+<div id="mapid"></div>
+<script th:inline="javascript">
+
+    var userPoints = [[${userPoints}]];
+    var othersPoints = [[${othersPoints}]];
+    var mymap = L.map('mapid').setView([54.1, 19.2], 5);
+
+/*    var otherIcon = L.icon({
+        iconUrl: 'pin.png',
+        iconSize: [38, 95],
+        iconAnchor: [22, 94],
+        popupAnchor: [-3, -76],
+        shadowUrl: 'pin.png',
+        shadowSize: [68, 95],
+        shadowAnchor: [22, 94]
+    });*/
+
+
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1,
+        accessToken: 'pk.eyJ1IjoicGlldHJlazE0MSIsImEiOiJja2ZndnRtZHkwNm5nMnNwOHMwYjBiMWp4In0.cNYcUKbcDTn9hPqyK5PKvw'
+    }).addTo(mymap);
+
+    userPoints.forEach(value => {
+        L.marker([value.lat, value.lon]).addTo(mymap).bindPopup("My place: " + value.name).openPopup();
+    })
+
+    othersPoints.forEach(value => {
+        L.marker([value.lat, value.lon]).addTo(mymap).bindPopup("Discover: " + value.name).openPopup();
+    })
+</script>
+
+</body>
+</html>
