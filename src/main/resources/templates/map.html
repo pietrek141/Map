@@ -12,60 +12,104 @@
             crossorigin=""></script>
 
 
+    <style>#mapid {
+        height: 600px;
+    }</style>
 
-    <style>#mapid { height: 600px; }</style>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
 
 </head>
 <body>
-<h1>Hello, <span th:text="${user}"/>!</h1>
-<h2>Add your point</h2>
-<form th:action="@{/add-point}" th:object="${newPoint}" method="post">
-    <p>Lat: <input type="text" th:field="*{lat}"></p>
-    <p>Lon: <input type="text" th:field="*{lon}"></p>
-    <p>Name: <input type="text" th:field="*{name}"></p>
-    <p><input type="submit" value="Add new point!"></p>
-</form>
+<div class="container">
+    <h1>Hello, <span th:text="${user}"/>!</h1>
 
-<h2>Remove your point</h2>
-<form th:action="@{/delete-point}" th:object="${pointId}" method="post">
-    <p>Id: <input type="text" th:field=="*{id}"></p>
-    <p><input type="submit" value="Delete point!"></p>
-</form>
-<div id="mapid"></div>
-<script th:inline="javascript">
+    <h3>Your places:</h3>
+    <hr>
+    <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>Lat</th>
+            <th>Lon</th>
+            <th>Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="tempPoint : ${userPoints}">
+            <td th:text="${tempPoint.lat}"/>
+            <td th:text="${tempPoint.lon}"/>
+            <td th:text="${tempPoint.name}"/>
+            <td>
+                <a th:href="@{/delete-point(pointId=${tempPoint.id})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="if (!(confirm('Are you sure you want to delete this point?'))) return false">
+                    Delete
+                </a>
 
-    var userPoints = [[${userPoints}]];
-    var othersPoints = [[${othersPoints}]];
-    var mymap = L.map('mapid').setView([54.1, 19.2], 5);
-
-/*    var otherIcon = L.icon({
-        iconUrl: 'pin.png',
-        iconSize: [38, 95],
-        iconAnchor: [22, 94],
-        popupAnchor: [-3, -76],
-        shadowUrl: 'pin.png',
-        shadowSize: [68, 95],
-        shadowAnchor: [22, 94]
-    });*/
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
 
-    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox/streets-v11',
-        tileSize: 512,
-        zoomOffset: -1,
-        accessToken: 'pk.eyJ1IjoicGlldHJlazE0MSIsImEiOiJja2ZndnRtZHkwNm5nMnNwOHMwYjBiMWp4In0.cNYcUKbcDTn9hPqyK5PKvw'
-    }).addTo(mymap);
+    <h2>Add your point</h2>
+    <form th:action="@{/add-point}" th:object="${point}" method="post">
+        <!--    <p>Lat: <input type="text" th:field="*{lat}"></p>
+                <span th:if="${#fields.hasErrors('lat')}" th:errors="*{lat}">Full name error</span></p>-->
+        <label>Lat:</label>
+        <input type="text" th:field="*{lat}"/>
+        <span class="error" th:if="${#fields.hasErrors('lat')}" th:errors="*{lat}"></span>
 
-    userPoints.forEach(value => {
-        L.marker([value.lat, value.lon]).addTo(mymap).bindPopup("My place: " + value.name).openPopup();
-    })
+        <span>Lon: <input type="text" th:field="*{lon}"></span>
+        <span th:if="${#fields.hasErrors('lon')}" th:errors="*{lon}">Full name error</span>
+        <p>Name: <input type="text" th:field="*{name}"></p>
+        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Full name error</span>
+        <p><input type="submit" value="Add new point!"></p>
+        <h3><span th:text="${addMessage}"/>
+        </h3>
+    </form>
 
-    othersPoints.forEach(value => {
-        L.marker([value.lat, value.lon]).addTo(mymap).bindPopup("Discover: " + value.name).openPopup();
-    })
-</script>
+    <div id="mapid"></div>
+    <script th:inline="javascript">
 
+        var userPoints = [[${userPoints}]];
+        var othersPoints = [[${othersPoints}]];
+        var mymap = L.map('mapid').setView([54.1, 19.2], 5);
+
+        /*    var otherIcon = L.icon({
+                iconUrl: 'pin.png',
+                iconSize: [38, 95],
+                iconAnchor: [22, 94],
+                popupAnchor: [-3, -76],
+                shadowUrl: 'pin.png',
+                shadowSize: [68, 95],
+                shadowAnchor: [22, 94]
+            });*/
+
+
+        L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'pk.eyJ1IjoicGlldHJlazE0MSIsImEiOiJja2ZndnRtZHkwNm5nMnNwOHMwYjBiMWp4In0.cNYcUKbcDTn9hPqyK5PKvw'
+        }).addTo(mymap);
+
+        userPoints.forEach(value => {
+            L.marker([value.lat, value.lon]).addTo(mymap).bindPopup("My place: " + value.name).openPopup();
+        })
+
+        othersPoints.forEach(value => {
+            L.marker([value.lat, value.lon]).addTo(mymap).bindPopup("Discover: " + value.name).openPopup();
+        })
+    </script>
+</div>
 </body>
 </html>

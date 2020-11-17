@@ -3,19 +3,31 @@ package com.mroczkowski.map;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
+
 
 @Entity
 public class Point {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @NotNull (message = "ABC")
+    @Min(value = 0)
+    @Max(value = 10)
+
     private Long id;
+    @Min(value = -90)
+    @Max(value = 90)
     private double lat;
+    @Min(value = -180)
+    @Max(value = 180, message = "BIG")
     private double lon;
+    @NotBlank
+    @Size(min = 1)
     private String name;
     @JsonBackReference
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name = "user_id")
     private AppUser appUser;
 
     public Point() {
