@@ -1,4 +1,4 @@
-package com.mroczkowski.map;
+package com.mroczkowski.map.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -11,19 +11,15 @@ public class Point {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    @NotNull (message = "ABC")
-    @Min(value = 0)
-    @Max(value = 10)
-
     private Long id;
-    @Min(value = -90)
-    @Max(value = 90)
+    @Min(value = -90, message = "Latitude must be between -90 and 90")
+    @Max(value = 90, message = "Latitude must be between -90 and 90")
     private double lat;
-    @Min(value = -180)
-    @Max(value = 180, message = "BIG")
+    @Min(value = -180, message = "Longitude must be between -180 and 180")
+    @Max(value = 180, message = "Longitude must be between -180 and 180")
     private double lon;
-    @NotBlank
-    @Size(min = 1)
+    @NotBlank(message = "Name cannot be empty")
+    @Size(min = 1, message = "Name should have at least 2 characters long")
     private String name;
     @JsonBackReference
     @ManyToOne

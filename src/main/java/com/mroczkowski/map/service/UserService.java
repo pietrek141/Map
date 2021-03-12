@@ -1,5 +1,8 @@
-package com.mroczkowski.map;
+package com.mroczkowski.map.service;
 
+import com.mroczkowski.map.db.AppUserRepo;
+import com.mroczkowski.map.model.AppUser;
+import com.mroczkowski.map.model.Role;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

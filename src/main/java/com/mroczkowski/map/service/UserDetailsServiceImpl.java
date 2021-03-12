@@ -1,11 +1,10 @@
-package com.mroczkowski.map;
+package com.mroczkowski.map.service;
 
+import com.mroczkowski.map.db.AppUserRepo;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.NoSuchElementException;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {

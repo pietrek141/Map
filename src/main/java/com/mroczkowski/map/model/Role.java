@@ -1,10 +1,9 @@
-package com.mroczkowski.map;
+package com.mroczkowski.map.model;
 
 import javax.persistence.*;
 
 public enum Role {
     USER("ROLE_USER"), ADMIN("ROLE_ADMIN");
-
 
     String roleName;
     @Id

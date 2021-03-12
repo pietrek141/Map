@@ -1,5 +1,6 @@
-package com.mroczkowski.map;
+package com.mroczkowski.map.db;
 
+import com.mroczkowski.map.model.Point;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

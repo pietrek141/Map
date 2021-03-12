@@ -1,4 +1,4 @@
-package com.mroczkowski.map;
+package com.mroczkowski.map.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.springframework.security.core.GrantedAuthority;
@@ -6,6 +6,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -18,11 +20,14 @@ public class AppUser implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
     private Long id;
+    @NotBlank(message = "Name cannot be empty")
+    @Size(min = 1, message = "Name should have at least 2 characters long")
     private String username;
+    @NotBlank(message = "Password cannot be empty")
+    @Size(min = 1, message = "Password should have at least 2 characters long")
     private String password;
-    //TODO make ths type of enum
-    //@Enumerated(EnumType.STRING)
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private Role role;
     @OneToMany(mappedBy="appUser", fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Point> points;
@@ -30,7 +35,7 @@ public class AppUser implements UserDetails {
     public AppUser() {
     }
 
-    public AppUser(Long id, String username, String password, String role, List<Point> points) {
+    public AppUser(Long id, String username, String password, Role role, List<Point> points) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -40,7 +45,7 @@ public class AppUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singleton(new SimpleGrantedAuthority(role));
+        return Collections.singleton(new SimpleGrantedAuthority(role.getRoleName()));
     }
 
     @Override
@@ -89,15 +94,15 @@ public class AppUser implements UserDetails {
         this.password = password;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
-        this.role = role.getRoleName();
-    }
+/*    public void setRole(Role role) {
+        this.role = role;
+    }*/
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 
@@ -109,14 +114,13 @@ public class AppUser implements UserDetails {
         this.points = points;
     }
 
-/*    @Override
+    @Override
     public String toString() {
         return "AppUser{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", role='" + role + '\'' +
-                ", points=" + points +
                 '}';
-    }*/
+    }
 }
